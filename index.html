@@ -302,19 +302,9 @@ function creaCaselle() {
   for (let r = 2; r <= 10; r++) ordine.push({ r, c: 11 });
 
   ordineCaselle = ordine.map(o => griglia.find(g => g.r === o.r && g.c === o.c).div);
-
-  // === ORDINAMENTO FISSO E BILANCIATO ===
-  const ordineFisso = [
-    1, 18, 11, 2, 25, 12, 3, 19, 13, 32,
-    4, 26, 14, 5, 33, 15, 6, 27, 20, 34,
-    7, 28, 16, 8, 35, 21, 9, 29, 17, 36,
-    10, 30, 22, 37, 23, 38, 24, 31, 39, 40
-  ];
-
   ordineCaselle.forEach((div, i) => {
-    const idx = ordineFisso[i] - 1;
-    div.textContent = caselle[idx].id;
-    div.setAttribute("data-descrizione", caselle[idx].descrizione);
+    div.textContent = caselle[i].id;
+    div.setAttribute("data-descrizione", caselle[i].descrizione);
   });
 
   const center = document.createElement("div");
