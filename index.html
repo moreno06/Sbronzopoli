@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sbronzopoli - Gioco da Tavolo</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: radial-gradient(circle at center, #3ca55c, #2f7336);
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .game-container {
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    grid-template-rows: repeat(11, 1fr);
+    gap: 4px;
+    width: 80vmin;
+    height: 80vmin;
+    background: rgba(255,255,255,0.1);
+    border: 4px solid white;
+    border-radius: 20px;
+    position: relative;
+  }
+
+  .casella {
+    background: linear-gradient(145deg, #ffffff, #e3e3e3);
+    border: 2px solid #333;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(10px, 1.5vmin, 14px);
+    font-weight: bold;
+    color: #222;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25),
+                inset 0 2px 2px rgba(255, 255, 255, 0.8);
+    position: relative;
+  }
+
+  .center-area {
+    grid-column: 2 / 11;
+    grid-row: 2 / 11;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  h1 {
+    color: #fff;
+    background-color: #d62828;
+    border: 4px solid #fff;
+    border-radius: 12px;
+    padding: 10px 20px;
+    display: inline-block;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  #giocatoriLegend {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    color: #222;
+    padding: 5px 10px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  .legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #000;
+  }
+
+  .side-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 20px;
+    color: white;
+    min-width: 220px;
+  }
+
+  #dado {
+    width: 10vmin;
+    height: 10vmin;
+    background: white;
+    border-radius: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+    padding: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+  }
+
+  .pallino {
+    width: 2vmin;
+    height: 2vmin;
+    background: #333;
+    border-radius: 50%;
+    margin: auto;
+    visibility: hidden;
+  }
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+    transition: background 0.2s;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+
+  #btnReset {
+    background-color: #ff5252;
+    display: none;
+  }
+
+  #btnReset:hover {
+    background-color: #e04848;
+  }
+
+  #turno {
+    font-weight: bold;
+    margin: 10px 0;
+  }
+
+  #descrizione {
+    margin-top: 10px;
+    min-height: 2em;
+    font-style: italic;
+    text-align: center;
+  }
+
+  .giocatore {
+    border-radius: 50%;
+    border: 3px solid #000;
+    width: 2.6vmin;
+    height: 2.6vmin;
+    position: relative;
+    margin: 1px;
+    box-sizing: border-box;
+  }
+
+  .pedine-container {
+    position: absolute;
+    inset: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 3px;
+    pointer-events: none;
+  }
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+  <div class="game-container" id="board"></div>
+  <div class="side-panel">
+    <h2>🎲 Dado</h2>
+    <div id="dado">
+      <div class="pallino" id="p1"></div>
+      <div class="pallino" id="p2"></div>
+      <div class="pallino" id="p3"></div>
+      <div class="pallino" id="p4"></div>
+      <div class="pallino" id="p5"></div>
+      <div class="pallino" id="p6"></div>
+      <div class="pallino" id="p7"></div>
+      <div class="pallino" id="p8"></div>
+      <div class="pallino" id="p9"></div>
+    </div>
+    <div id="turno"></div>
+    <button id="btnTira">Tira il dado</button>
+    <button id="btnReset">Riavvia</button>
+    <div id="descrizione"></div>
+  </div>
+</div>
+
+<script>
+const board = document.getElementById("board");
+
+const caselle = [
+  // 10 SAFE
+  {id:1, descrizione:"Non devi bere"},
+  {id:2, descrizione:"Non devi bere"},
+  {id:3, descrizione:"Non devi bere"},
+  {id:4, descrizione:"Non devi bere"},
+  {id:5, descrizione:"Non devi bere"},
+  {id:6, descrizione:"Non devi bere"},
+  {id:7, descrizione:"Non devi bere"},
+  {id:8, descrizione:"Non devi bere"},
+  {id:9, descrizione:"Non devi bere"},
+  {id:10, descrizione:"Non devi bere"},
+  // 7 SHOT
+  {id:11, descrizione:"Bevi 1 shot"},
+  {id:12, descrizione:"Bevi 2 shot"},
+  {id:13, descrizione:"Bevi 1 shot"},
+  {id:14, descrizione:"Bevi 3 shot"},
+  {id:15, descrizione:"Bevi 2 shot"},
+  {id:16, descrizione:"Bevi 1 shot"},
+  {id:17, descrizione:"Bevi 3 shot"},
+  // 7 DRINK
+  {id:18, descrizione:"Bevi 1 bicchiere"},
+  {id:19, descrizione:"Bevi 2 bicchieri"},
+  {id:20, descrizione:"Bevi 1 bicchiere"},
+  {id:21, descrizione:"Bevi 2 bicchieri"},
+  {id:22, descrizione:"Bevi 1 bicchiere"},
+  {id:23, descrizione:"Bevi 2 bicchieri"},
+  {id:24, descrizione:"Bevi 1 bicchiere"},
+  // 7 MISTE
+  {id:25, descrizione:"Bevi 1 bicchiere e 1 shot"},
+  {id:26, descrizione:"Bevi 2 bicchieri e 1 shot"},
+  {id:27, descrizione:"Bevi 1 bicchiere e 2 shot"},
+  {id:28, descrizione:"Bevi 1 bicchiere e 1 shot"},
+  {id:29, descrizione:"Bevi 2 bicchieri e 2 shot"},
+  {id:30, descrizione:"Bevi 1 bicchiere e 1 shot"},
+  {id:31, descrizione:"Bevi 1 bicchiere e 2 shot"},
+  // 9 SPECIALI
+  {id:32, descrizione:"Torna indietro di 2 caselle"},
+  {id:33, descrizione:"Il giocatore alla tua destra beve 1 bicchiere"},
+  {id:34, descrizione:"Torna indietro di 3 caselle"},
+  {id:35, descrizione:"Il giocatore alla tua destra beve 1 shot"},
+  {id:36, descrizione:"Torna indietro di 1 casella"},
+  {id:37, descrizione:"Il giocatore alla tua destra beve 2 bicchieri"},
+  {id:38, descrizione:"Torna indietro di 2 caselle"},
+  {id:39, descrizione:"Il giocatore alla tua destra beve 1 bicchiere"},
+  {id:40, descrizione:"Bevi 1 bicchiere e 1 shot"}
+];
+
+let ordineCaselle = [];
+
+function creaCaselle() {
+  board.innerHTML = "";
+  const griglia = [];
+
+  for (let r = 1; r <= 11; r++) {
+    for (let c = 1; c <= 11; c++) {
+      const bordo = r === 1 || r === 11 || c === 1 || c === 11;
+      const centro = r >= 2 && r <= 10 && c >= 2 && c <= 10;
+      if (bordo && !centro) {
+        const div = document.createElement("div");
+        div.classList.add("casella");
+        div.style.gridRow = r;
+        div.style.gridColumn = c;
+        board.appendChild(div);
+        griglia.push({ div, r, c });
+      }
+    }
+  }
+
+  const ordine = [];
+  for (let c = 11; c >= 1; c--) ordine.push({ r: 11, c });
+  for (let r = 10; r >= 1; r--) ordine.push({ r, c: 1 });
+  for (let c = 2; c <= 11; c++) ordine.push({ r: 1, c });
+  for (let r = 2; r <= 10; r++) ordine.push({ r, c: 11 });
+
+  ordineCaselle = ordine.map(o => griglia.find(g => g.r === o.r && g.c === o.c).div);
+
+  // === ORDINAMENTO FISSO E BILANCIATO ===
+  const ordineFisso = [
+    1, 18, 11, 2, 25, 12, 3, 19, 13, 32,
+    4, 26, 14, 5, 33, 15, 6, 27, 20, 34,
+    7, 28, 16, 8, 35, 21, 9, 29, 17, 36,
+    10, 30, 22, 37, 23, 38, 24, 31, 39, 40
+  ];
+
+  ordineCaselle.forEach((div, i) => {
+    const idx = ordineFisso[i] - 1;
+    div.textContent = caselle[idx].id;
+    div.setAttribute("data-descrizione", caselle[idx].descrizione);
+  });
+
+  const center = document.createElement("div");
+  center.classList.add("center-area");
+  center.innerHTML = `<h1>Sbronzopoli</h1><div id="giocatoriLegend"></div>`;
+  board.appendChild(center);
+
+  avviaGioco();
+}
+
+function avviaGioco() {
+  const legendContainer = document.getElementById("giocatoriLegend");
+  const dado = document.getElementById("dado");
+  const pallini = dado.querySelectorAll(".pallino");
+  const turnoDisplay = document.getElementById("turno");
+  const descrizione = document.getElementById("descrizione");
+  const btnTira = document.getElementById("btnTira");
+  const btnReset = document.getElementById("btnReset");
+
+  let giocatori = [];
+  let turno = 0;
+  let partitaFinita = false;
+
+  function generaColoriUnici(num) {
+    const colori = [];
+    const step = 360 / num;
+    for (let i = 0; i < num; i++) colori.push(`hsl(${Math.round(i*step)},80%,50%)`);
+    return colori;
+  }
+
+  function creaGiocatori() {
+    legendContainer.innerHTML = "";
+    let num = parseInt(prompt("Quanti giocatori partecipano?", "2"), 10) || 2;
+    giocatori = [];
+    const colori = generaColoriUnici(num);
+
+    for (let i = 0; i < num; i++) {
+      let nome = prompt(`Nome del Giocatore ${i+1}:`, `Giocatore ${i+1}`) || `Giocatore ${i+1}`;
+      giocatori.push({ nome, posizione: 0, colore: colori[i] });
+      const item = document.createElement("div");
+      item.classList.add("legend-item");
+      item.innerHTML = `<div class="legend-color" style="background:${colori[i]}"></div> ${nome}`;
+      legendContainer.appendChild(item);
+    }
+
+    turno = 0;
+    partitaFinita = false;
+    turnoDisplay.textContent = `Turno di ${giocatori[turno].nome}`;
+    mostraFaccia(1);
+    descrizione.textContent = "";
+    btnTira.disabled = false;
+    btnReset.style.display = "none";
+    aggiornaBoard();
+  }
+
+  function mostraFaccia(numero) {
+    const visibili = {
+      1:[5], 2:[1,9], 3:[1,5,9], 4:[1,3,7,9], 5:[1,3,5,7,9], 6:[1,3,4,6,7,9]
+    };
+    pallini.forEach((p,i)=>p.style.visibility=visibili[numero].includes(i+1)?"visible":"hidden");
+  }
+
+  function tiraDado() {
+    const numero = Math.floor(Math.random()*6)+1;
+    dado.style.transform="rotate(360deg)";
+    setTimeout(()=>{dado.style.transform="rotate(0deg)";},300);
+    mostraFaccia(numero);
+    return numero;
+  }
+
+  function aggiornaBoard() {
+    document.querySelectorAll(".giocatore").forEach(g=>g.remove());
+    document.querySelectorAll(".pedine-container").forEach(c=>c.remove());
+
+    const gruppi = {};
+    giocatori.forEach(g=>{
+      if(g.posizione>0 && g.posizione<=ordineCaselle.length){
+        const idx = g.posizione-1;
+        gruppi[idx] = gruppi[idx] || [];
+        gruppi[idx].push(g);
+      }
+    });
+
+    Object.keys(gruppi).forEach(idxStr=>{
+      const idx=parseInt(idxStr,10);
+      const cella = ordineCaselle[idx];
+      if(!cella) return;
+      const container=document.createElement("div");
+      container.className="pedine-container";
+      cella.appendChild(container);
+      gruppi[idx].forEach(g=>{
+        const pedina=document.createElement("div");
+        pedina.classList.add("giocatore");
+        pedina.style.backgroundColor=g.colore;
+        container.appendChild(pedina);
+      });
+    });
+  }
+
+  btnTira.addEventListener("click", ()=>{
+    if(partitaFinita) return;
+    const g=giocatori[turno];
+    const tiro=tiraDado();
+    g.posizione+=tiro;
+    if(g.posizione>=ordineCaselle.length){
+      g.posizione=ordineCaselle.length;
+      aggiornaBoard();
+      descrizione.textContent=`${g.nome} ha raggiunto la casella 40! 🏁`;
+      turnoDisplay.textContent=`🎉 ${g.nome} VINCE IL GIOCO! 🎉`;
+      btnTira.disabled=true;
+      btnReset.style.display="inline-block";
+      partitaFinita=true;
+      return;
+    }
+    aggiornaBoard();
+    const cella=ordineCaselle[g.posizione-1];
+    const testoDescr=cella?cella.getAttribute("data-descrizione"):"";
+    descrizione.textContent=`${g.nome} è sulla casella ${g.posizione}: ${testoDescr}`;
+    turno=(turno+1)%giocatori.length;
+    turnoDisplay.textContent=`Turno di ${giocatori[turno].nome}`;
+  });
+
+  btnReset.addEventListener("click", creaGiocatori);
+  creaGiocatori();
+}
+
+creaCaselle();
+</script>
+</body>
+</html>
