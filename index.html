@@ -226,52 +226,16 @@
 <script>
 const board = document.getElementById("board");
 
-const caselle = [
-  // 10 SAFE
-  {id:1, descrizione:"Non devi bere"},
-  {id:2, descrizione:"Non devi bere"},
-  {id:3, descrizione:"Non devi bere"},
-  {id:4, descrizione:"Non devi bere"},
-  {id:5, descrizione:"Non devi bere"},
-  {id:6, descrizione:"Non devi bere"},
-  {id:7, descrizione:"Non devi bere"},
-  {id:8, descrizione:"Non devi bere"},
-  {id:9, descrizione:"Non devi bere"},
-  {id:10, descrizione:"Non devi bere"},
-  // 7 SHOT
-  {id:11, descrizione:"Bevi 1 shot"},
-  {id:12, descrizione:"Bevi 2 shot"},
-  {id:13, descrizione:"Bevi 1 shot"},
-  {id:14, descrizione:"Bevi 3 shot"},
-  {id:15, descrizione:"Bevi 2 shot"},
-  {id:16, descrizione:"Bevi 1 shot"},
-  {id:17, descrizione:"Bevi 3 shot"},
-  // 7 DRINK
-  {id:18, descrizione:"Bevi 1 bicchiere"},
-  {id:19, descrizione:"Bevi 2 bicchieri"},
-  {id:20, descrizione:"Bevi 1 bicchiere"},
-  {id:21, descrizione:"Bevi 2 bicchieri"},
-  {id:22, descrizione:"Bevi 1 bicchiere"},
-  {id:23, descrizione:"Bevi 2 bicchieri"},
-  {id:24, descrizione:"Bevi 1 bicchiere"},
-  // 7 MISTE
-  {id:25, descrizione:"Bevi 1 bicchiere e 1 shot"},
-  {id:26, descrizione:"Bevi 2 bicchieri e 1 shot"},
-  {id:27, descrizione:"Bevi 1 bicchiere e 2 shot"},
-  {id:28, descrizione:"Bevi 1 bicchiere e 1 shot"},
-  {id:29, descrizione:"Bevi 2 bicchieri e 2 shot"},
-  {id:30, descrizione:"Bevi 1 bicchiere e 1 shot"},
-  {id:31, descrizione:"Bevi 1 bicchiere e 2 shot"},
-  // 9 SPECIALI
-  {id:32, descrizione:"Torna indietro di 2 caselle"},
-  {id:33, descrizione:"Il giocatore alla tua destra beve 1 bicchiere"},
-  {id:34, descrizione:"Torna indietro di 3 caselle"},
-  {id:35, descrizione:"Il giocatore alla tua destra beve 1 shot"},
-  {id:36, descrizione:"Torna indietro di 1 casella"},
-  {id:37, descrizione:"Il giocatore alla tua destra beve 2 bicchieri"},
-  {id:38, descrizione:"Torna indietro di 2 caselle"},
-  {id:39, descrizione:"Il giocatore alla tua destra beve 1 bicchiere"},
-  {id:40, descrizione:"Bevi 1 bicchiere e 1 shot"}
+// 👉 Descrizioni mischiate in modo bilanciato e fisso
+const descrizioniMischiate = [
+  "Bevi 1 bicchiere", "Non devi bere", "Bevi 1 shot", "Torna indietro di 2 caselle", "Bevi 2 bicchieri",
+  "Bevi 1 bicchiere e 1 shot", "Bevi 3 shot", "Il giocatore alla tua destra beve 1 bicchiere", "Bevi 2 shot", "Bevi 1 bicchiere",
+  "Non devi bere", "Bevi 1 bicchiere e 2 shot", "Bevi 1 shot", "Bevi 2 bicchieri e 1 shot", "Bevi 1 bicchiere e 1 shot",
+  "Torna indietro di 1 casella", "Bevi 2 bicchieri e 2 shot", "Non devi bere", "Bevi 2 bicchieri", "Bevi 1 bicchiere e 1 shot",
+  "Bevi 2 shot", "Il giocatore alla tua destra beve 1 shot", "Non devi bere", "Bevi 1 bicchiere", "Bevi 3 shot",
+  "Bevi 1 bicchiere e 1 shot", "Torna indietro di 2 caselle", "Bevi 1 bicchiere e 2 shot", "Bevi 2 bicchieri", "Bevi 1 bicchiere e 1 shot",
+  "Non devi bere", "Bevi 2 bicchieri", "Bevi 1 bicchiere", "Torna indietro di 3 caselle", "Bevi 2 bicchieri e 1 shot",
+  "Bevi 1 bicchiere e 1 shot", "Bevi 1 shot", "Bevi 2 bicchieri", "Il giocatore alla tua destra beve 2 bicchieri", "Bevi 1 bicchiere e 1 shot"
 ];
 
 let ordineCaselle = [];
@@ -295,6 +259,7 @@ function creaCaselle() {
     }
   }
 
+  // Definisci l’ordine delle caselle lungo il bordo
   const ordine = [];
   for (let c = 11; c >= 1; c--) ordine.push({ r: 11, c });
   for (let r = 10; r >= 1; r--) ordine.push({ r, c: 1 });
@@ -302,9 +267,11 @@ function creaCaselle() {
   for (let r = 2; r <= 10; r++) ordine.push({ r, c: 11 });
 
   ordineCaselle = ordine.map(o => griglia.find(g => g.r === o.r && g.c === o.c).div);
+
+  // Assegna numeri fissi 1–40, ma descrizioni mischiate
   ordineCaselle.forEach((div, i) => {
-    div.textContent = caselle[i].id;
-    div.setAttribute("data-descrizione", caselle[i].descrizione);
+    div.textContent = i + 1;
+    div.setAttribute("data-descrizione", descrizioniMischiate[i]);
   });
 
   const center = document.createElement("div");
